@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #222222;
+}
+
+body {
+  color: var(--foreground);
+  background: #f6f6f6;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Стили в духе Авито */
+input, select, textarea {
+  @apply focus:ring-2 focus:ring-blue-100 transition-all;
+}
+
+.avito-button-green {
+  @apply bg-[#00aa61] text-white hover:bg-[#008f51] transition-colors rounded-lg font-bold;
+}
+
+.avito-button-blue {
+  @apply bg-[#0077ff] text-white hover:bg-[#0066dd] transition-colors rounded-lg font-bold;
+}
