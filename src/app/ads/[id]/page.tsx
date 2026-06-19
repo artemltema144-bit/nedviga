@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { MapPin, Calendar, User, MessageCircle, Home as HomeIcon, Layers, Info } from "lucide-react";
 import { validateRequest } from "@/lib/auth-utils";
 import { formatPrice } from "@/lib/utils";
@@ -7,13 +8,31 @@ import Image from "next/image";
 
 export default async function AdPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
-  const ad = await prisma.ad.findUnique({
-    where: { id: params.id },
-    include: {
-      user: true,
-      images: true,
-    },
-  });
+  let ad: any = null;
+  let dbError = false;
+
+  try {
+    ad = await prisma.ad.findUnique({
+      where: { id: params.id },
+      include: {
+        user: true,
+        images: true,
+      },
+    });
+  } catch (e) {
+    console.error("Ad fetch error:", e);
+    dbError = true;
+  }
+
+  if (dbError) {
+    return (
+      <div className="max-w-2xl mx-auto p-8 text-center mt-20">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Ошибка базы данных</h1>
+        <p className="text-gray-600 mb-6">Не удалось загрузить данные объявления. Пожалуйста, проверьте подключение к базе данных.</p>
+        <Link href="/debug" className="bg-[#0077ff] text-white px-6 py-2 rounded-lg font-bold">Проверить подключение</Link>
+      </div>
+    );
+  }
 
   if (!ad) notFound();
 
@@ -32,7 +51,7 @@ export default async function AdPage({ params: paramsPromise }: { params: Promis
                 <div className="aspect-square relative md:col-span-2 overflow-hidden">
                   <img src={ad.images[0].data} alt={ad.title} className="w-full h-full object-cover" />
                 </div>
-                {ad.images.slice(1).map((img, idx) => (
+                {ad.images.slice(1).map((img: any, idx: number) => (
                   <div key={img.id} className="aspect-square relative overflow-hidden">
                     <img src={img.data} alt={`${ad.title} ${idx + 2}`} className="w-full h-full object-cover" />
                   </div>

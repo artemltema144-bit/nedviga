@@ -14,19 +14,48 @@ export default async function Home({
   const category = typeof searchParams.category === "string" ? searchParams.category : undefined;
   const query = typeof searchParams.q === "string" ? searchParams.q : undefined;
 
-  const ads = await prisma.ad.findMany({
-    where: {
-      city: city,
-      category: category,
-      title: query ? { contains: query } : undefined,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      images: true,
-    },
-  });
+  let ads: any[] = [];
+  let dbError = false;
+
+  try {
+    ads = await prisma.ad.findMany({
+      where: {
+        city: city,
+        category: category,
+        title: query ? { contains: query } : undefined,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        images: true,
+      },
+    });
+  } catch (e) {
+    console.error("Database error:", e);
+    dbError = true;
+    // Данные для демонстрации, если база не подключена
+    ads = [
+      {
+        id: "demo-1",
+        title: "Квартира в центре Артемовска (Демо)",
+        price: 500000,
+        city: "Артемовск",
+        type: "Продажа",
+        createdAt: new Date(),
+        images: []
+      },
+      {
+        id: "demo-2",
+        title: "Дом у озера (Демо)",
+        price: 1200000,
+        city: "Вероград",
+        type: "Продажа",
+        createdAt: new Date(),
+        images: []
+      }
+    ];
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -88,7 +117,13 @@ export default async function Home({
         </Link>
       </div>
 
-      {ads.length === 0 ? (
+      {dbError ? (
+        <div className="bg-red-50 border border-red-100 p-8 rounded-xl text-center">
+          <p className="text-red-800 font-bold mb-2">Ошибка подключения к базе данных</p>
+          <p className="text-red-600 text-sm mb-4">Сайт загрузился, но не может получить список объявлений. Проверьте DATABASE_URL в настройках Netlify.</p>
+          <Link href="/debug" className="text-red-800 underline font-medium">Перейти на страницу диагностики</Link>
+        </div>
+      ) : ads.length === 0 ? (
         <div className="text-center py-20">
           <p className="text-gray-500 text-xl">Ничего не найдено</p>
         </div>
