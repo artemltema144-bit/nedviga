@@ -15,8 +15,8 @@ export default async function Navbar() {
               nedviga
             </Link>
             <nav className="hidden md:flex gap-4 text-sm text-gray-600">
-              <Link href="/ads?type=Продажа" className="hover:text-[#0077ff]">Купить</Link>
-              <Link href="/ads?type=Аренда" className="hover:text-[#0077ff]">Снять</Link>
+              <Link href="/?type=Продажа" className="hover:text-[#0077ff]">Купить</Link>
+              <Link href="/?type=Аренда" className="hover:text-[#0077ff]">Снять</Link>
             </nav>
           </div>
 
@@ -27,7 +27,7 @@ export default async function Navbar() {
             {user ? (
               <Link href="/profile" className="flex items-center gap-2 text-gray-600 hover:text-[#0077ff] p-2">
                 <User size={24} />
-                <span className="hidden sm:inline text-sm font-medium">{user.email.split('@')[0]}</span>
+                <span className="hidden sm:inline text-sm font-medium">{user.name || user.email.split('@')[0]}</span>
               </Link>
             ) : (
               <Link href="/login" className="text-gray-600 hover:text-[#0077ff] font-medium text-sm">

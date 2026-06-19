@@ -13,6 +13,14 @@ export async function sendMessage(formData: FormData): Promise<void> {
 
   if (!text.trim()) return;
 
+  // Verify user is in chat
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId },
+    include: { users: true }
+  });
+
+  if (!chat || !chat.users.some(u => u.id === user.id)) return;
+
   await prisma.message.create({
     data: {
       chatId,

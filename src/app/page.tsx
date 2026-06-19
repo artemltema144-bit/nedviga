@@ -12,6 +12,7 @@ export default async function Home({
   const searchParams = await searchParamsPromise;
   const city = typeof searchParams.city === "string" ? searchParams.city : undefined;
   const category = typeof searchParams.category === "string" ? searchParams.category : undefined;
+  const type = typeof searchParams.type === "string" ? searchParams.type : undefined;
   const query = typeof searchParams.q === "string" ? searchParams.q : undefined;
 
   let ads: any[] = [];
@@ -22,6 +23,7 @@ export default async function Home({
       where: {
         city: city,
         category: category,
+        type: type,
         title: query ? { contains: query } : undefined,
       },
       orderBy: {
@@ -98,6 +100,8 @@ export default async function Home({
             ))}
           </select>
 
+          {type && <input type="hidden" name="type" value={type} />}
+
           <button
             type="submit"
             className="bg-[#0077ff] text-white px-8 py-3 rounded-lg font-bold hover:bg-[#0066dd] transition-colors"
@@ -109,7 +113,7 @@ export default async function Home({
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-[#222]">
-          {city ? `Недвижимость в г. ${city}` : "Рекомендации для вас"}
+          {type ? (type === "Продажа" ? "Купить недвижимость" : "Снять недвижимость") : (city ? `Недвижимость в г. ${city}` : "Рекомендации для вас")}
         </h2>
         <Link href="/map" className="flex items-center gap-2 text-[#0077ff] font-medium hover:underline">
           <MapIcon size={20} />
