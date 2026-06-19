@@ -19,7 +19,7 @@ export default async function ProfilePage() {
     return redirect("/login");
   }
 
-  let ads = [];
+  let ads: any[] = [];
   try {
     ads = await prisma.ad.findMany({
       where: {
