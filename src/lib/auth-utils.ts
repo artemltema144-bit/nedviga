@@ -5,27 +5,21 @@ import { Session, User } from "lucia";
 
 export const validateRequest = cache(
 	async (): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
-		const sessionId = (await cookies()).get(lucia.sessionCookieName)?.value ?? null;
-		if (!sessionId) {
-			return {
-				user: null,
-				session: null
-			};
-		}
-
 		try {
+			const sessionId = (await cookies()).get(lucia.sessionCookieName)?.value ?? null;
+			if (!sessionId) {
+				return {
+					user: null,
+					session: null
+				};
+			}
+
 			const result = await lucia.validateSession(sessionId);
-			// next.js throws when you attempt to set cookie when rendering page
-			try {
-				if (result.session && result.session.fresh) {
-					const sessionCookie = lucia.createSessionCookie(result.session.id);
-					(await cookies()).set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-				}
-				if (!result.session) {
-					const sessionCookie = lucia.createBlankSessionCookie();
-					(await cookies()).set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-				}
-			} catch {}
+
+			// We skip setting cookies during render to avoid Next.js "headers already sent" or
+			// "cannot set cookies during render" errors on production environments like Netlify.
+			// Session extension will happen on next Server Action or via a middleware if needed.
+
 			return result;
 		} catch (e) {
 			console.error("Auth validation error:", e);
