@@ -4,7 +4,6 @@ import Link from "next/link";
 import { MapPin, Calendar, User, MessageCircle, Home as HomeIcon, Layers, Info } from "lucide-react";
 import { validateRequest } from "@/lib/auth-utils";
 import { formatPrice } from "@/lib/utils";
-import Image from "next/image";
 
 export default async function AdPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
@@ -37,6 +36,7 @@ export default async function AdPage({ params: paramsPromise }: { params: Promis
   if (!ad) notFound();
 
   const { user: currentUser } = await validateRequest();
+  const sellerName = ad.user.name || ad.user.email.split('@')[0];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -46,7 +46,7 @@ export default async function AdPage({ params: paramsPromise }: { params: Promis
           <h1 className="text-3xl font-bold mb-4">{ad.title}</h1>
 
           <div className="bg-gray-100 rounded-xl mb-6 overflow-hidden border">
-            {ad.images.length > 0 ? (
+            {ad.images && ad.images.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div className="aspect-square relative md:col-span-2 overflow-hidden">
                   <img src={ad.images[0].data} alt={ad.title} className="w-full h-full object-cover" />
@@ -149,7 +149,7 @@ export default async function AdPage({ params: paramsPromise }: { params: Promis
                 <p className="text-4xl font-black text-[#222]">
                   {formatPrice(ad.price)}
                 </p>
-                <img src="/zhoron.png" alt="Zhoron" className="w-8 h-8 object-contain" />
+                <span className="text-2xl font-black text-[#0077ff]">}|{</span>
               </div>
               <p className="text-gray-500">{ad.type}</p>
             </div>
@@ -177,12 +177,12 @@ export default async function AdPage({ params: paramsPromise }: { params: Promis
 
             <div className="mt-8 pt-8 border-t">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                  <User className="text-gray-400" />
+                <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center text-gray-400 font-bold">
+                  {sellerName[0].toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-bold text-[#222]">{ad.user.email.split('@')[0]}</p>
-                  <p className="text-xs text-gray-500">На nedviga с 2026 года</p>
+                  <p className="font-bold text-[#222]">{sellerName}</p>
+                  <p className="text-xs text-gray-500 font-medium italic">На nedviga с 2026 года</p>
                 </div>
               </div>
             </div>
