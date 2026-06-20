@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { CATEGORIES, CITIES } from "@/lib/constants";
-import { Search, Map as MapIcon } from "lucide-react";
+import { Search } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 export default async function Home({
@@ -115,10 +115,6 @@ export default async function Home({
         <h2 className="text-2xl font-bold text-[#222]">
           {type ? (type === "Продажа" ? "Купить недвижимость" : "Снять недвижимость") : (city ? `Недвижимость в г. ${city}` : "Рекомендации для вас")}
         </h2>
-        <Link href="/map" className="flex items-center gap-2 text-[#0077ff] font-medium hover:underline">
-          <MapIcon size={20} />
-          Показать на карте Ирновии
-        </Link>
       </div>
 
       {dbError ? (
@@ -137,7 +133,7 @@ export default async function Home({
             <Link href={`/ads/${ad.id}`} key={ad.id} className="group">
               <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="aspect-[4/3] bg-gray-200 flex items-center justify-center text-gray-400 relative">
-                  {ad.images.length > 0 ? (
+                  {ad.images && ad.images.length > 0 ? (
                     <img src={ad.images[0].data} alt={ad.title} className="w-full h-full object-cover" />
                   ) : (
                     "Нет фото"
