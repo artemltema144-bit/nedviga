@@ -149,7 +149,7 @@ export default async function AdPage({ params: paramsPromise }: { params: Promis
                 <p className="text-4xl font-black text-[#222]">
                   {formatPrice(ad.price)}
                 </p>
-                <span className="text-2xl font-black text-[#0077ff]">}|{</span>
+                <span className="text-2xl font-black text-[#0077ff]">{"}|"}{' {'}</span>
               </div>
               <p className="text-gray-500">{ad.type}</p>
             </div>
